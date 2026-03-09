@@ -9,4 +9,3 @@ notes/*.md
 !notes/.gitkeep
 .venv/
 .DS_Store
-.gitignore
