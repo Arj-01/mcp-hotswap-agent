@@ -1,0 +1,69 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../servers:/app/servers
+      - ../notes:/app/notes
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - OLLAMA_BASE_URL=http://ollama:11434
+    depends_on:
+      - redis
+      - ollama
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=http://api:8000
+    depends_on:
+      - api
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - CUDA_VISIBLE_DEVICES=
+      - OLLAMA_LOAD_TIMEOUT=10m
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/dashboard.json
+    volumes:
+      - ../monitoring/grafana-dashboard.json:/var/lib/grafana/dashboards/dashboard.json
+      - ../monitoring/grafana-datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ../monitoring/grafana-dashboard-provider.yml:/etc/grafana/provisioning/dashboards/provider.yml
+    depends_on:
+      - prometheus
+
+volumes:
+  redis_data:
+  ollama_data:
