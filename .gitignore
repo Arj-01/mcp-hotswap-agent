@@ -10,3 +10,5 @@ notes/*.md
 .venv/
 .claude/
 CLAUDE.md
+.DS_Store
+.gitignore
