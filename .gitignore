@@ -8,7 +8,5 @@ build/
 notes/*.md
 !notes/.gitkeep
 .venv/
-.claude/
-CLAUDE.md
 .DS_Store
 .gitignore
