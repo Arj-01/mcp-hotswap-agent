@@ -119,7 +119,7 @@
       },
       "targets": [
       {
-        "expr": "vector(5.36)",
+        "expr": "sum(rate(queries_total{status=\"error\"}[5m])) / sum(rate(queries_total[5m])) * 100",
         "legendFormat": "Error Rate %",
         "refId": "A"
       }
