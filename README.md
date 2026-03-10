@@ -79,7 +79,7 @@ ollama pull llama3.2
 ### Run
 
 ```bash
-git clone https://github.com/murkbyash/mcp-hotswap-agent.git
+git clone https://github.com/Arj-01/mcp-hotswap-agent.git
 cd mcp-hotswap-agent
 bash scripts/start.sh
 ```
