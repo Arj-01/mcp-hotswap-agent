@@ -118,14 +118,32 @@ async def post_query(body: QueryRequest):
     m.update_tool_count(len(tools))
 
     # Metrics
-    m.track_query("success", resp.total_duration_ms / 1000)
+    # m.track_query("success", resp.total_duration_ms / 1000)
+    # for tr in resp.tool_results:
+    #     info = await _registry.find_tool(tr["tool"])
+    #     server = info["server_name"] if info else "unknown"
+    #     result_lower = tr["result"].lower()
+    #     if "timed out" in result_lower:
+    #         status = "timeout"
+    #     elif "error" in result_lower:
+    #         status = "error"
+    #     else:
+    #         status = "success"
+    #     m.track_tool_call(server, tr["tool"], status, tr["duration_ms"] / 1000)
+
+    # return resp
+    # Metrics
+    error_keywords = ("error", "unavailable", "no results", "timed out", "failed", "forbidden")
+    has_error = any(kw in tr["result"].lower() for tr in resp.tool_results for kw in error_keywords)
+    m.track_query("error" if has_error else "success", resp.total_duration_ms / 1000)
+
     for tr in resp.tool_results:
         info = await _registry.find_tool(tr["tool"])
         server = info["server_name"] if info else "unknown"
         result_lower = tr["result"].lower()
         if "timed out" in result_lower:
             status = "timeout"
-        elif "error" in result_lower:
+        elif any(kw in result_lower for kw in ("error", "unavailable", "no results", "failed", "forbidden")):
             status = "error"
         else:
             status = "success"

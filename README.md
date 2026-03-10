@@ -1,4 +1,4 @@
-# ⚡ MCP Multi-Agent Assistant
+# MCP Multi-Agent Assistant
 
 An AI assistant powered by the **Model Context Protocol (MCP)** with hot-pluggable tool servers. One Router Agent dynamically selects from multiple MCP servers based on natural language queries using LLM-powered tool routing.
 
